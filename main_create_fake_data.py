@@ -5,8 +5,6 @@ from os import path
 
 from agents.frequentist_agent import FrequentistAgent
 from agents.rl_agent import RLOnAcceptanceAgent
-from agents.stupid_agent import StupidAgent
-# from hyperopt import fmin, tpe, hp
 
 
 class Economy(object):
@@ -130,14 +128,14 @@ class Backup(object):
         self.n = len(agent_type)
         self.data = {
             "agent_type": list(agent_type),
-            "choice": [],
-            "success": []
+            "hist_choice": [],
+            "hist_success": []
         }
 
     def add_data(self, choice, success):
 
-        self.data["choice"].append(choice.copy())
-        self.data["success"].append(success.copy())
+        self.data["market_choice"].append(choice.copy())
+        self.data["hist_success"].append(success.copy())
 
     def end(self):
 

@@ -287,16 +287,20 @@ def main():
     with open(path.expanduser("~/Desktop/fake_for_android_experiment.json"), "r") as f:
         data = json.load(f)
 
-    mark_plot = MarketAttendancePlot(data["choice"])
+    mark_plot = MarketAttendancePlot(data["market_choice"])
     mark_plot.plot()
 
-    cons_plot = ConsumptionPlot(success=data["success"], agent_type=data["agent_type"], choice=data["choice"])
+    cons_plot = ConsumptionPlot(
+        success=data["hist_success"],
+        agent_type=data["agent_type"],
+        choice=data["market_choice"]
+    )
     cons_plot.plot()
 
-    mof_plot = MediumOfExchangePlot(agent_type=data["agent_type"], choice=data["choice"])
+    mof_plot = MediumOfExchangePlot(agent_type=data["agent_type"], choice=data["market_choice"])
     mof_plot.plot()
 
-    ch_plot = ChoicePlot(choice=data["choice"])
+    ch_plot = ChoicePlot(choice=data["market_choice"])
     ch_plot.plot()
 
 
