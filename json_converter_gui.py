@@ -14,6 +14,7 @@ class JsonConverterWindow(QWidget):
         super().__init__()
         
         self.save_path = None
+        self.save_file_name = "/last_data.json"
 
         self.layout = QGridLayout(self)
         self.label = QLabel(self)
@@ -37,9 +38,9 @@ class JsonConverterWindow(QWidget):
 
     def get_save_path(self):
 
-        file_path = QFileDialog.getExistingDirectory(self, 'Select where you want to save your data.', os.getenv("HOME"))
-        print(file_path)
-        if not file_path:
+        self.save_path = QFileDialog.getExistingDirectory(self, 'Select where you want to save your data.', os.getenv("HOME"))
+
+        if not self.save_path:
 
             msgbox = QMessageBox()
             msgbox.setIcon(QMessageBox.Critical)
@@ -51,6 +52,9 @@ class JsonConverterWindow(QWidget):
 
             if msgbox.clickedButton() == close:
                 sys.exit()
+        else:
+
+            self.save_path += self.save_file_name
 
     def import_data(self):
         
@@ -71,13 +75,8 @@ class JsonConverterWindow(QWidget):
     def convert_data(self):
         
         # to_json implicitly call convert_array_to_list
-        try:
-
-            JsonConverter.to_json(self.data, output=self.save_path)
+        JsonConverter.to_json(self.data, output=self.save_path)
         
-        except AttributeError as e:
-            self.label.setText(self.label.text() + "\nError: " + str(e))
-
     def add_market_choice(self):
         
         market_choice = []
