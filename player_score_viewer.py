@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import numpy as np
 from PyQt5.QtWidgets import (QWidget, QToolTip,
                              QPushButton, QApplication, QFileDialog,
                              QGridLayout, QMessageBox, QLabel)
@@ -17,8 +18,7 @@ class ScoreWindow(QWidget):
         self.import_data()
 
         self.nplayer = len(self.data["p"])
-        print(self.nplayer)
-        self.sorted_data = [{"p": None, "reward": None} for i in range(self.nplayer)]
+        self.sorted_data = [{"id": None, "p": None, "reward": None} for i in range(self.nplayer)]
 
         self.sort_data()
 
@@ -47,24 +47,27 @@ class ScoreWindow(QWidget):
             self.data = pickle.load(open(file_path, "rb"))
 
     def sort_data(self):
+        
+        game_ids = np.sort(self.data["server_id_in_use"])
 
-        for i, idx in enumerate(self.data["server_id_in_use"]):
-            self.sorted_data[idx]["p"] = self.data["p"][i]
-            self.sorted_data[idx]["reward"] = self.data["reward_amount"][i]
+        for idx in range(self.nplayer):
+            self.sorted_data[idx]["id"] = game_ids[idx]
+            self.sorted_data[idx]["p"] = self.data["p"][idx]
+            self.sorted_data[idx]["reward"] = self.data["reward_amount"][idx]
 
     def fill_layout(self):
 
-        coord = ((x, y) for x in range(7) for y in range(15))
+        coord = ((x, y) for y in range(15) for x in range(7))
 
-        for idx, data in enumerate(self.sorted_data):
+        for data in self.sorted_data:
             info = QLabel(self)
-            info.setText("id: {}  ".format(idx)
+            info.setText("id: {}  ".format(data["id"])
                          + "type: {}  ".format(data["p"])
                          + "reward: {}  ".format(data["reward"]))
 
             my_coord = next(coord)
 
-            self.layout.addWidget(info, my_coord[1], my_coord[0])
+            self.layout.addWidget(info, my_coord[0], my_coord[1])
 
     def init_UI(self):
 
