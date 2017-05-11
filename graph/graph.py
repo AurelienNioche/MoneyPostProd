@@ -5,6 +5,7 @@ import json
 
 
 class MarketAttendancePlot(object):
+
     legend_font_size = 12
     label_font_size = 12
 
@@ -15,8 +16,6 @@ class MarketAttendancePlot(object):
 
     @staticmethod
     def format_data(choice):
-
-        print(choice)
 
         t_max = len(choice)
 
@@ -72,6 +71,7 @@ class MarketAttendancePlot(object):
 
 
 class ChoicePlot(object):
+
     legend_font_size = 12
     label_font_size = 12
 
@@ -181,10 +181,9 @@ class ConsumptionPlot(object):
         y = []
 
         for t in range(t_max):
+
             consumption = 0
             for c, s, at, in zip(choice[t], success[t], agent_type):
-                print(s)
-                print(c)
                 if c[1] == (at + 1) % 3 and s:
                     consumption += 1
 
@@ -301,8 +300,10 @@ class GaussianReward(object):
     @staticmethod
     def format_data(reward_amount):
 
-        y = reward_amount
-        x = np.arange(len(y))
+        x = np.arange(min(reward_amount), max(reward_amount))
+        y = []
+        for i in x:
+            y.append(reward_amount.count(i))
 
         return x, y
 
@@ -360,8 +361,6 @@ def main():
         data = json.load(f)
 
     plot(data=data, save_path=save_path)
-
-
 
 
 if __name__ == "__main__":

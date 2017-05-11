@@ -113,6 +113,10 @@ class Economy(object):
 
         return self.success
 
+    def get_consumption(self):
+
+        return [i.consumption for i in self.agents]
+
 
 class Backup(object):
 
@@ -127,15 +131,20 @@ class Backup(object):
 
         self.n = len(agent_type)
         self.data = {
-            "agent_type": list(agent_type),
-            "hist_choice": [],
-            "hist_success": []
+            "p": list(agent_type),
+            "market_choice": [],
+            "hist_success": [],
+            "reward_amount": [0 for i in range(self.n)]
         }
 
-    def add_data(self, choice, success):
+    def add_data(self, choice, success, consumption):
 
         self.data["market_choice"].append(choice.copy())
         self.data["hist_success"].append(success.copy())
+
+        for i in range(self.n):
+
+            self.data["reward_amount"][i] += consumption[i]
 
     def end(self):
 
@@ -145,7 +154,7 @@ class Backup(object):
 
 def main():
 
-    file_path = path.expanduser("~/Desktop/fake_for_android_experiment.json")
+    file_path = path.expanduser("~/Desktop/AndroidXP/fake.json")
 
     t_max = 100
 
@@ -170,7 +179,7 @@ def main():
 
     for t in range(t_max):
         e.time_step()
-        b.add_data(choice=e.get_choice(), success=e.get_success())
+        b.add_data(choice=e.get_choice(), success=e.get_success(), consumption=e.get_consumption())
 
     b.end()
 
