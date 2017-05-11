@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from PyQt5.QtWidgets import QDialog, QWidget, QApplication, QFileDialog, QHBoxLayout, QMessageBox, QLabel, QPushButton
 from json_converter_gui import JsonConverterWindow
-from main_graph import MainGraph
+from main_graph import GraphWindow 
 from player_score_viewer import ScoreWindow
 import pickle
 import os
