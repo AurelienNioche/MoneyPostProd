@@ -1,11 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy, QMessageBox, QWidget,QFileDialog,QProgressBar, QLabel, QGridLayout
 from PyQt5 import QtCore
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib
 from pylab import plt, np
 from scipy.stats import norm
-matplotlib.use("Qt5Agg")
 import random
 import json
 import os
