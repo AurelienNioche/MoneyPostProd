@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QVBoxLayout, QSizePolicy, QMessageBox, QWidget, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy, QMessageBox, QWidget,QFileDialog,QProgressBar, QLabel, QGridLayout
 from PyQt5 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -323,38 +323,43 @@ class GaussianReward(object):
 
         plt.savefig(self.fig_name)
 
-class MyMplCanvas(FigureCanvas):
-    """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-
-    def __init__(self, figure, parent=None, width=5, height=4, dpi=100):
-
-        FigureCanvas.__init__(self, figure)
-        self.setParent(parent)
-
-        FigureCanvas.setSizePolicy(self,
-                QSizePolicy.Expanding,
-                QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-
 
 class GraphWindow(QWidget):
 
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("AndroidExperiment : MainGraph")
-
-        self.layout = QVBoxLayout(self)
+        self.layout = QGridLayout(self)
         
         self.get_save_path()
         self.import_data()
         self.generate_fig()
-        self.import_fig()
-
-        # self.main_widget.setFocus()
-        self.setCentralWidget(self.main_widget)
-        self.show()
+        self.init_UI()
     
+    def init_UI(self):
+        
+        self.setWindowTitle("AndroidExperiment : MainGraph")
+        prog = QProgressBar(self)
+        prog.setValue(100)
+        label = QLabel(self)
+        label.setText("Figures are generated!")
+        self.layout.addWidget(prog)
+        self.layout.addWidget(label)
+        self.show()
+
+    def show_error(self, title="Error", text="ERROR"):
+
+            msgbox = QMessageBox()
+            msgbox.setIcon(QMessageBox.Critical)
+            msgbox.setWindowTitle(title)
+            msgbox.setText(text)
+            close = msgbox.addButton("Close", QMessageBox.ActionRole)
+
+            msgbox.exec_()
+
+            if msgbox.clickedButton() == close:
+                sys.exit()
+
     def get_save_path(self):
 
         self.save_path = QFileDialog.getExistingDirectory(
@@ -364,50 +369,23 @@ class GraphWindow(QWidget):
             )
 
         if not self.save_path:
-
-            msgbox = QMessageBox()
-            msgbox.setIcon(QMessageBox.Critical)
-            msgbox.setWindowTitle("Error")
-            msgbox.setText("Selecting a file is required to proceed")
-            close = msgbox.addButton("Close", QMessageBox.ActionRole)
-
-            msgbox.exec_()
-
-            if msgbox.clickedButton() == close:
-                sys.exit()
-  
-
+            self.show_error(text="You must select a path.")
+              
     def import_data(self):
         
         file_path = QFileDialog.getOpenFileName(self, 'Open file', os.getenv("HOME"))[0]
 
         if not file_path:
+            self.show_error(text="Selecting a file is required to proceed")
 
-            msgbox = QMessageBox()
-            msgbox.setIcon(QMessageBox.Critical)
-            msgbox.setWindowTitle("Error")
-            msgbox.setText("Selecting a file is required to proceed")
-            close = msgbox.addButton("Close", QMessageBox.ActionRole)
-
-            msgbox.exec_()
-        
-            if msgbox.clickedButton() == close:
-                sys.exit()
         else:
-            with open(file_path, "rb") as f:
-                self.data = json.load(f)
+            try:
+                with open(file_path, "rb") as f:
+                    self.data = json.load(f)
+            
+            except Exception as e:
+                self.show_error(text="You must select json data: " + str(e)) 
 
-    def import_fig(self):
-        
-        for figure in self.figure_list:
-            fig = MyMplCanvas(figure,
-                    self.main_widget,
-                    width=5,
-                    height=4,
-                    dpi=100
-                    )
-            self.layout.addWidget(fig)
-        
     def generate_fig(self):
         
         mark_plot = MarketAttendancePlot(self.save_path, self.data["market_choice"])
@@ -437,18 +415,17 @@ class GraphWindow(QWidget):
 
         self.figure_list = [mark_plot.fig, mof_plot.fig, ch_plot.fig, gauss_plot.fig]
 
-    def fileQuit(self):
-        self.close()
-
-    def closeEvent(self, ce):
-        self.fileQuit()
-    
     @staticmethod
     def main():
+
         app = QApplication(sys.argv)
         win = GraphWindow()
         sys.exit(app.exec_())
  
+if __name__ == '__main__':
+
+    GraphWindow.main()
+
 # class MyMplCanvas(FigureCanvas):
     # """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
 

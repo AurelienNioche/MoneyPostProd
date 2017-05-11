@@ -2,9 +2,7 @@
 import sys
 import numpy as np
 from PyQt5.QtWidgets import QDialog, QWidget, QApplication, QFileDialog, QHBoxLayout, QMessageBox, QLabel, QPushButton
-from json_converter_gui import JsonConverterWindow
-from main_graph import GraphWindow 
-from player_score_viewer import ScoreWindow
+from subprocess import Popen
 import pickle
 import os
 
@@ -30,15 +28,15 @@ class MainWindow(QWidget):
     
     def compute_figures(self):
 
-        mywin = GraphWindow()
+        Popen(["python",  "main_graph.py"])
 
     def view_players_scores(self):
 
-        mywin = ScoreWindow()
-        
+        Popen(["python",  "player_score_viewer.py"])
+
     def convert_to_json(self):
 
-        mywin = JsonConverterWindow()
+        Popen(["python",  "json_converter_gui.py"])
 
     def fill_layout(self):
         
@@ -49,7 +47,6 @@ class MainWindow(QWidget):
 
         self.fill_layout()
         self.setWindowTitle("AndroidExperiment: Main post prod")
-        self.setGeometry(200, 200, 500, 100)
         self.show()
 
     @staticmethod
