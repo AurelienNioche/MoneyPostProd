@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from os import path, getenv, chdir
 import sys
 from threading import Thread
+from multiprocessing import cpu_count
 from subprocess import call
 
 
@@ -22,7 +23,8 @@ class ConverterTread(Thread):
 
         chdir(self.folder)
 
-        call("avconv -threads 8 -f image2 -i %04dshot.png -r 60 -s 1024x768 -qscale 1 final.avi".split(" "))
+        call("avconv -threads {} -f image2 -i %04dshot.png -r 60 -s 1024x768 -qscale 1 final.avi"
+             .format(cpu_count()).split(" "))
 
         self.communicant.signal.emit()
 
