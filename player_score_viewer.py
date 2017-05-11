@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QGridLayout, QMessageBox, QLabel
 import pickle
-import os
+from os import path, getenv
 
 
 class ScoreWindow(QWidget):
@@ -11,6 +11,7 @@ class ScoreWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.file_path = None
         self.data = None
         self.sorted_data = None
 
@@ -22,27 +23,47 @@ class ScoreWindow(QWidget):
 
     def init(self):
 
-        self.import_data()
-        self.sort_data()
+        self.get_file_path()
+        if self.file_path:
+            self.import_data()
+            self.sort_data()
+
+    @staticmethod
+    def show_error():
+
+        msgbox = QMessageBox()
+        msgbox.setIcon(QMessageBox.Critical)
+        msgbox.setWindowTitle("Error")
+        msgbox.setText("Selecting a file is required to proceed.")
+        close = msgbox.addButton("Close", QMessageBox.ActionRole)
+
+        msgbox.exec_()
+
+        if msgbox.clickedButton() == close:
+            sys.exit()
+
+    def get_file_path(self):
+
+        expected_dir = path.expanduser("~/Desktop/AndroidXP")
+        if path.exists(expected_dir):
+            directory = expected_dir
+        else:
+            directory = getenv("HOME")
+
+        print("Directory", directory)
+        file_path = QFileDialog.getOpenFileName(
+            self, 'Open file', directory,
+            "Pickle files (*.p )")[0]
+
+        if file_path:
+            self.file_path = file_path
+
+        else:
+            self.show_error()
 
     def import_data(self):
 
-        file_path = QFileDialog.getOpenFileName(self, 'Open file', os.getenv("HOME"))[0]
-
-        if not file_path:
-
-            msgbox = QMessageBox()
-            msgbox.setIcon(QMessageBox.Critical)
-            msgbox.setWindowTitle("Error")
-            msgbox.setText("Selecting a file is required to proceed")
-            close = msgbox.addButton("Close", QMessageBox.ActionRole)
-
-            msgbox.exec_()
-        
-            if msgbox.clickedButton() == close:
-                sys.exit()
-        else:
-            self.data = pickle.load(open(file_path, "rb"))
+        self.data = pickle.load(open(self.file_path, "rb"))
 
     def sort_data(self):
 
@@ -66,7 +87,7 @@ class ScoreWindow(QWidget):
                          + "type: {}  ".format(data["p"])
                          + "reward: {}  ".format(data["reward"]))
 
-            #generate new coordinates
+            # generate new coordinates
             my_coord = next(coord)
 
             self.layout.addWidget(info, my_coord[0], my_coord[1])

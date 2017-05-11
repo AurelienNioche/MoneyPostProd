@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import \
     QApplication, QMessageBox, QWidget, QFileDialog, QProgressBar, QLabel, QGridLayout
 from PyQt5.QtCore import pyqtSignal, QObject
-from os import path, getenv, chdir
+from os import path, getenv, chdir, rename
 import sys
 from threading import Thread
 from multiprocessing import cpu_count
@@ -22,6 +22,9 @@ class ConverterTread(Thread):
     def run(self):
 
         chdir(self.folder)
+        old_file = self.folder + "/final.avi"
+        if path.exists(self.folder + "/final.avi"):
+            rename(old_file, self.folder + "/_old_final.avi")
 
         call("avconv -threads {} -f image2 -i %04dshot.png -r 60 -s 1024x768 -qscale 1 final.avi"
              .format(cpu_count()).split(" "))
