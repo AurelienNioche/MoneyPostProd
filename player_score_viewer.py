@@ -58,7 +58,7 @@ class ScoreWindow(QWidget):
 
     def fill_layout(self):
 
-        coord = ((x, y) for y in range(15) for x in range(7))
+        coord = ((x, y) for y in range(12) for x in range(12))
 
         for data in self.sorted_data:
             info = QLabel(self)

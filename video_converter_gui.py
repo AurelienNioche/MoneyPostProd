@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import \
     QApplication, QMessageBox, QWidget, QFileDialog, QProgressBar, QLabel, QGridLayout
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject, QTimer, Qt
 from os import path, getenv, chdir
+import numpy as np
 import sys
 from threading import Thread
 from multiprocessing import cpu_count
@@ -23,8 +24,9 @@ class ConverterTread(Thread):
 
         chdir(self.folder)
 
-        call("avconv -threads {} -f image2 -i %04dshot.png -r 60 -s 1024x768 -qscale 1 final.avi"
-             .format(cpu_count()).split(" "))
+        call("avconv -threads {} -f image2 -i %04dshot.png "
+             "-r 60 -s 1366x768 -qscale 1 final{}.avi"
+             .format(cpu_count(), np.random.randint(99999)).split(" "))
 
         self.communicant.signal.emit()
 
@@ -38,11 +40,18 @@ class VideoConverterWindow(QWidget):
         self.label = QLabel(self)
         self.prog = QProgressBar(self)
 
+        self.label.setAlignment(Qt.AlignHCenter)
+
         self.folder_path = None
+
+        self.refresh = (180000 / 100)
+        self.timer = QTimer(self)
+
+        self.timer.timeout.connect(self.update_prog)
 
         self.communicant = Communicate()
         self.communicant.signal.connect(self.done)
-
+        
         self.init()
         self.init_UI()
 
@@ -52,6 +61,7 @@ class VideoConverterWindow(QWidget):
 
         if self.folder_path:
             self.generate_video()
+            self.timer.start(self.refresh)
 
     def init_UI(self):
 
@@ -100,7 +110,14 @@ class VideoConverterWindow(QWidget):
         th = ConverterTread(folder=self.folder_path, communicant=self.communicant)
         th.start()
 
+    def update_prog(self):
+        
+        if self.prog.value() < 99:
+            self.prog.setValue(self.prog.value() + 1)
+            self.timer.start(self.refresh)
+
     def done(self):
+
         self.prog.setValue(100)
         self.label.setText("Done!")
 

@@ -2,6 +2,7 @@ from pylab import plt, np
 from scipy.stats import norm
 from os import path
 import json
+from collections import Counter
 
 
 class MarketAttendancePlot(object):
@@ -294,18 +295,17 @@ class GaussianReward(object):
     label_font_size = 12
 
     def __init__(self, save_path, reward_amount):
-        self.X, self.Y = self.format_data(reward_amount)
+        self.data, self.fit  = self.format_data(reward_amount)
         self.fig_name = save_path + "/gaussian_reward.pdf"
 
     @staticmethod
     def format_data(reward_amount):
 
-        x = np.arange(min(reward_amount), max(reward_amount))
-        y = []
-        for i in x:
-            y.append(reward_amount.count(i))
+        data = np.sort(reward_amount)
 
-        return x, y
+        fit = norm.pdf(data, np.mean(data), np.std(data))
+
+        return data, fit
 
     def plot(self):
 
@@ -316,10 +316,8 @@ class GaussianReward(object):
         ax = plt.gca()
         ax.set_title("Gaussian rewards \n")
 
-        sd = np.std(self.Y)
-        mn = np.mean(self.Y)
-
-        ax.plot(self.X, norm.pdf(self.Y, mn, sd))
+        ax.plot(self.data, self.fit)
+        ax.hist(self.data, normed=True)
 
         plt.savefig(self.fig_name)
         plt.close()
