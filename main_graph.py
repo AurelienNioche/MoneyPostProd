@@ -1,325 +1,13 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy, QMessageBox, QWidget,QFileDialog,QProgressBar, QLabel, QGridLayout
-from PyQt5 import QtCore
-from matplotlib.figure import Figure
-import matplotlib
-from pylab import plt, np
-from scipy.stats import norm
-import random
+from PyQt5.QtWidgets import \
+    QApplication, QMainWindow, QVBoxLayout, QSizePolicy, \
+    QMessageBox, QWidget, QFileDialog, QProgressBar, QLabel, QGridLayout, \
+    QPushButton
+
 import json
 import os
 import sys
 
-
-class MarketAttendancePlot(object):
-    legend_font_size = 12
-    label_font_size = 12
-
-    def __init__(self, save_path, choice):
-
-        self.X, self.Ys = self.format_data(choice)
-        self.fig_name = save_path + "/market_attendance.pdf"
-
-    @staticmethod
-    def format_data(choice):
-
-        t_max = len(choice)
-
-        x = np.arange(t_max)
-
-        y0 = []
-        y1 = []
-        y2 = []
-        for t in range(t_max):
-            y0.append(choice[t].count([0, 1]) + choice[t].count([1, 0]))
-            y1.append(choice[t].count([1, 2]) + choice[t].count([2, 1]))
-            y2.append(choice[t].count([2, 0]) + choice[t].count([0, 2]))
-
-        ys = y0, y1, y2
-
-        return x, ys
-
-    def plot(self):
-
-        self.fig = plt.figure(figsize=(25, 12))
-        self.fig.patch.set_facecolor('white')
-        self.fig.patch.set_alpha(0)
-
-        self.ax = plt.gca()
-        self.ax.set_title("Markets attendance \n")
-
-        labels = [
-            "Market 0 -> 1 / 1 -> 0",
-            "Market 1 -> 2 / 2 -> 1",
-            "Market 2 -> 0 / 0 -> 2",
-        ]
-        line_styles = [
-            "-",
-            "--",
-            ":"
-        ]
-
-        for i, y in enumerate(self.Ys):
-            self.ax.plot(self.X, y, label=labels[i], linewidth=2, color="black", linestyle=line_styles[i])
-
-        self.ax.legend(bbox_to_anchor=(0.15, 0.1), fontsize=self.legend_font_size, frameon=False)
-
-        self.ax.set_xlabel("t", fontsize=self.label_font_size)
-        self.ax.set_ylabel("n", fontsize=self.label_font_size)
-
-        self.ax.spines['right'].set_color('none')
-        self.ax.yaxis.set_ticks_position('left')
-        self.ax.xaxis.set_ticks_position('bottom')
-        self.ax.spines['top'].set_color('none')
-
-        plt.savefig(self.fig_name)
-
-
-class ChoicePlot(object):
-    legend_font_size = 12
-    label_font_size = 12
-
-    def __init__(self, save_path, choice):
-
-        self.X, self.Ys = self.format_data(choice)
-        self.fig_name = save_path + "/choice.pdf"
-
-    @staticmethod
-    def format_data(choice):
-
-        t_max = len(choice)
-
-        x = np.arange(t_max)
-
-        y0, y1, y2, y3, y4, y5 = [], [], [], [], [], []
-
-        for t in range(t_max):
-            y0.append(choice[t].count([0, 1]))
-            y1.append(choice[t].count([1, 0]))
-            y2.append(choice[t].count([1, 2]))
-            y3.append(choice[t].count([2, 1]))
-            y4.append(choice[t].count([2, 0]))
-            y5.append(choice[t].count([0, 2]))
-
-        ys = y0, y1, y2, y3, y4, y5
-
-        return x, ys
-
-    def plot(self):
-
-        self.fig = plt.figure(figsize=(25, 12))
-        self.fig.patch.set_facecolor('white')
-        self.fig.patch.set_alpha(0)
-
-        self.ax = plt.gca()
-        self.ax.set_title("Choices \n")
-
-        labels = [
-            "Choice 0 -> 1",
-            "Choice 1 -> 0",
-            "Choice 1 -> 2",
-            "Choice 2 -> 1",
-            "Choice 2 -> 0",
-            "Choice 0 -> 2",
-        ]
-        line_styles = [
-            "-",
-            "-",
-            "-",
-            "-",
-            "-",
-            "-"
-        ]
-        markers = [
-            4,
-            5,
-            4,
-            5,
-            4,
-            5
-        ]
-
-        colors = [
-            "red",
-            "red",
-            "blue",
-            "blue",
-            "green",
-            "green"
-        ]
-
-        for i, y in enumerate(self.Ys):
-            self.ax.plot(self.X, y, label=labels[i], linewidth=2, color=colors[i], linestyle=line_styles[i], marker=markers[i])
-
-        self.ax.legend(bbox_to_anchor=(0.9, 0.9), fontsize=self.legend_font_size, frameon=False)
-
-        self.ax.set_xlabel("t", fontsize=self.label_font_size)
-        self.ax.set_ylabel("n", fontsize=self.label_font_size)
-
-        self.ax.spines['right'].set_color('none')
-        self.ax.yaxis.set_ticks_position('left')
-        self.ax.xaxis.set_ticks_position('bottom')
-        self.ax.spines['top'].set_color('none')
-
-        plt.savefig(self.fig_name)
-
-
-class ConsumptionPlot(object):
-    legend_font_size = 12
-    label_font_size = 12
-
-    def __init__(self, save_path, choice, success, agent_type ):
-
-        self.X, self.Y = self.format_data(choice=choice, success=success, agent_type=agent_type)
-        self.fig_name = save_path + "/consumption.pdf"
-
-    @staticmethod
-    def format_data(choice, success, agent_type):
-
-        t_max = len(choice)
-
-        x = np.arange(t_max)
-
-        y = []
-
-        for t in range(t_max):
-            consumption = 0
-            for c, s, at, in zip(choice[t], success[t], agent_type):
-                if c[1] == (at + 1) % 3 and s:
-                    consumption += 1
-
-            y.append(consumption)
-
-        return x, y
-
-    def plot(self):
-
-        self.fig = plt.figure(figsize=(25, 12))
-        self.fig.patch.set_facecolor('white')
-        self.fig.patch.set_alpha(0)
-
-        self.ax = plt.gca()
-        self.ax.set_title("Consumption\n")
-
-        self.ax.plot(self.X, self.Y, linewidth=2, color="black")
-
-        self.ax.set_xlabel("t", fontsize=self.label_font_size)
-        self.ax.set_ylabel("n", fontsize=self.label_font_size)
-
-        self.ax.spines['right'].set_color('none')
-        self.ax.yaxis.set_ticks_position('left')
-        self.ax.xaxis.set_ticks_position('bottom')
-        self.ax.spines['top'].set_color('none')
-
-        plt.savefig(self.fig_name)
-
-
-class MediumOfExchangePlot(object):
-
-
-    legend_font_size = 12
-    label_font_size = 12
-
-    def __init__(self, save_path, choice, agent_type):
-        
-        self.fig_name = save_path + "/medium_of_exchange.pdf"
-        self.X, self.Ys = self.format_data(choice, agent_type)
-
-    @staticmethod
-    def format_data(choice, agent_type):
-
-        t_max = len(choice)
-
-        x = np.arange(t_max)
-
-        ys = [], [], []
-
-        for t in range(t_max):
-
-            # Will register the number of times each good has been used as a medium of exchange
-            y = [0, 0, 0]
-
-            for i, ch, at in zip(range(len(agent_type)), choice[t], agent_type):
-
-                p = at
-                c = (at + 1) % 3
-                m = (at + 2) % 3
-                if (ch[0] == p and ch[1] == m) or (ch[0] == m and ch[1] == c):
-                    y[m] += 1
-
-            for i in range(3):
-                ys[i].append(y[i])
-
-        return x, ys
-
-    def plot(self):
-
-        self.fig = plt.figure(figsize=(25, 12))
-        self.fig.patch.set_facecolor('white')
-        self.fig.patch.set_alpha(0)
-
-        self.ax = plt.gca()
-        self.ax.set_title("Medium of exchange \n")
-
-        labels = [
-            "Good 0",
-            "Good 1",
-            "Good 2",
-        ]
-        line_styles = [
-            ":",
-            "--",
-            "-"
-        ]
-
-        for i, y in enumerate(self.Ys):
-            self.ax.plot(self.X, y, label=labels[i], linewidth=2, color="black", linestyle=line_styles[i])
-
-        self.ax.legend(bbox_to_anchor=(0.15, 0.1), fontsize=self.legend_font_size, frameon=False)
-
-        self.ax.set_xlabel("t", fontsize=self.label_font_size)
-        self.ax.set_ylabel("n", fontsize=self.label_font_size)
-
-        self.ax.spines['right'].set_color('none')
-        self.ax.yaxis.set_ticks_position('left')
-        self.ax.xaxis.set_ticks_position('bottom')
-        self.ax.spines['top'].set_color('none')
-
-        plt.savefig(self.fig_name)
-
-
-class GaussianReward(object):
-    legend_font_size = 12
-    label_font_size = 12
-
-    def __init__(self, save_path, reward_amount):
-
-        self.X, self.Y = self.format_data(reward_amount)
-        self.fig_name = save_path + "/gaussian_reward.pdf"
-
-    @staticmethod
-    def format_data(reward_amount):
-
-        y = reward_amount
-
-        x = np.arange(len(y))
-
-        return x, y
-
-    def plot(self):
-
-        self.fig = plt.figure(figsize=(25, 12))
-        self.fig.patch.set_facecolor('white')
-        self.fig.patch.set_alpha(0)
-
-        self.ax = plt.gca()
-        self.ax.set_title("Gaussian rewards \n")
-        
-        sd = np.std(self.Y)
-        mn = np.mean(self.Y)
-
-        self.ax.plot(self.X, norm.pdf(self.Y, mn, sd))
-
-        plt.savefig(self.fig_name)
+from graph.graph import MarketAttendancePlot, ConsumptionPlot, MediumOfExchangePlot, GaussianReward
 
 
 class GraphWindow(QWidget):
@@ -328,90 +16,112 @@ class GraphWindow(QWidget):
         super().__init__()
 
         self.layout = QGridLayout(self)
-        
-        self.get_save_path()
-        self.import_data()
-        self.generate_fig()
+        self.label = QLabel(self)
+
+        self.push_button = QPushButton('Run!')
         self.init_UI()
     
     def init_UI(self):
-        
-        self.setWindowTitle("AndroidExperiment : MainGraph")
-        prog = QProgressBar(self)
-        prog.setValue(100)
-        label = QLabel(self)
-        label.setText("Figures are generated!")
-        self.layout.addWidget(prog)
-        self.layout.addWidget(label)
+
+        self.push_button.clicked.connect(self.run)
+        self.setWindowTitle("AndroidExperiment: MainGraph")
+        # prog = QProgressBar(self)
+        # prog.setValue(100)
+
+        # label.setText("Figures are generated!")
+        # self.layout.addWidget(prog)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.push_button)
         self.show()
 
-    def show_error(self, title="Error", text="ERROR"):
+    def run(self):
 
-            msgbox = QMessageBox()
-            msgbox.setIcon(QMessageBox.Critical)
-            msgbox.setWindowTitle(title)
-            msgbox.setText(text)
-            close = msgbox.addButton("Close", QMessageBox.ActionRole)
+        save_path = os.path.expanduser("~/Desktop/AndroidXP")
+        file_path = os.path.expanduser("~/Desktop/AndroidXP/data.json")
 
-            msgbox.exec_()
+        data = self.import_data(file_path)
+        if data:
+            self.generate_fig(save_path, data)
 
-            if msgbox.clickedButton() == close:
-                sys.exit()
+        print("Im here")
 
-    def get_save_path(self):
+    @staticmethod
+    def show_error(title="Error", text="ERROR"):
 
-        self.save_path = QFileDialog.getExistingDirectory(
+        msgbox = QMessageBox()
+        msgbox.setIcon(QMessageBox.Critical)
+        msgbox.setWindowTitle(title)
+        msgbox.setText(text)
+        close = msgbox.addButton("Close", QMessageBox.ActionRole)
+
+        msgbox.exec_()
+
+        if msgbox.clickedButton() == close:
+            sys.exit()
+
+    def select_folder_path(self):
+
+        folder_path = QFileDialog.getExistingDirectory(
             self, 
             'Select where you want to save your data.', 
             os.getenv("HOME")
-            )
+        )
 
-        if not self.save_path:
+        if not folder_path:
             self.show_error(text="You must select a path.")
-              
-    def import_data(self):
-        
+
+        else:
+            return folder_path
+
+    def select_file_path(self):
+
         file_path = QFileDialog.getOpenFileName(self, 'Open file', os.getenv("HOME"))[0]
 
         if not file_path:
             self.show_error(text="Selecting a file is required to proceed")
-
         else:
-            try:
-                with open(file_path, "r") as f:
-                    self.data = json.load(f)
-            
-            except Exception as e:
-                self.show_error(text="You must select json data: " + str(e)) 
+            return file_path
+              
+    def import_data(self, file_path):
 
-    def generate_fig(self):
+        data = None
+
+        try:
+            with open(file_path) as f:
+                data = json.load(f)
+
+        except Exception as e:
+            self.show_error(text="You must select json data: " + str(e))
+
+        finally:
+            return data
+
+    def generate_fig(self, save_path, data):
         
-        mark_plot = MarketAttendancePlot(self.save_path, self.data["market_choice"])
+        mark_plot = MarketAttendancePlot(save_path, data["market_choice"])
         mark_plot.plot()
 
-        cons_plot = ConsumptionPlot(
-            self.save_path,
-            success=self.data["hist_success"],
-            agent_type=self.data["p"],
-            choice=self.data["market_choice"],
-        )
-        cons_plot.plot()
-
-        mof_plot = MediumOfExchangePlot(
-                self.save_path,
-                agent_type=self.data["p"], 
-                choice=self.data["market_choice"]
-                )
-        
-        mof_plot.plot()
-
-        ch_plot = ChoicePlot(self.save_path, choice=self.data["market_choice"])
-        ch_plot.plot()
-
-        gauss_plot = GaussianReward(self.save_path, self.data["reward_amount"])
-        gauss_plot.plot()
-
-        self.figure_list = [mark_plot.fig, mof_plot.fig, ch_plot.fig, gauss_plot.fig]
+        # cons_plot = ConsumptionPlot(
+        #     save_path,
+        #     success=data["hist_success"],
+        #     agent_type=data["p"],
+        #     choice=data["market_choice"],
+        # )
+        # cons_plot.plot()
+        #
+        # mof_plot = MediumOfExchangePlot(
+        #         save_path,
+        #         agent_type=data["p"],
+        #         choice=data["market_choice"]
+        #         )
+        #
+        # mof_plot.plot()
+        #
+        # ch_plot = ChoicePlot(save_path, choice=data["market_choice"])
+        # ch_plot.plot()
+        #
+        # gauss_plot = GaussianReward(save_path, reward_amount=data["reward_amount"])
+        # gauss_plot.plot()
 
     @staticmethod
     def main():

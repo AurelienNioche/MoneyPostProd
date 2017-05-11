@@ -82,30 +82,29 @@ class JsonConverterWindow(QWidget):
         prog.setValue(100)
         self.layout.addWidget(prog)
         self.label.setText("Conversion is done!" + self.label.text())
-
         
     def add_market_choice(self):
-        
-        market_choice = []
 
-        #create t list containing n agent market choice
-        # of the form [ [ [firstvalue, secondvalue] * n ] * t ] 
-        for array in self.data["hist_choice"]:
-            market_choice.append(self.get_real_good(array))
+        t_max = len(self.data["hist_choice"])
+        n = len(self.data["hist_choice"][0])
 
-        #append secondvalue (indx is t - 1 in order 
-        #to get the initialy carried good)
-        for t in range(len(self.data["hist_h"])):
-            for idx in range(len(market_choice[0])):
-                if idx != 0:
-                    market_choice[t][idx][1] = int(self.data["hist_h"][t - 1][idx])
-                else:
-                    market_choice[t][idx][1] = int(self.data["p"][idx])
+        market_choice = np.ones((t_max, n, 2), dtype=int) * - 1
+
+        market_choice[0, :, 0] = self.data["p"]
+
+        for t in range(1, t_max):
+
+            for i in range(n):
+
+                market_choice[t, i, 0] = self.data["hist_h"][t - 1][i]
+
+        for t in range(t_max):
+            for i in range(n):
+                market_choice[t, i, 1] = self.get_desired_good(
+                    i=i, value=self.data["hist_choice"][t][i])
         
         self.data["market_choice"] = market_choice
-
-    def get_real_good(self, array):
-        return [[int(self.get_desired_good(i, value)), -1] for i, value in enumerate(array)]
+        print(market_choice)
 
     def get_desired_good(self, i, value):
 
