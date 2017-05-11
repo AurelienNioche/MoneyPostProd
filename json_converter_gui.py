@@ -1,7 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QLabel, QGridLayout, QMessageBox
+from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog, QLabel, QGridLayout, QMessageBox, QProgressBar
 from PyQt5.QtCore import Qt
-
 import os
 import json
 import pickle
@@ -14,7 +13,7 @@ class JsonConverterWindow(QWidget):
         super().__init__()
         
         self.save_path = None
-        self.save_file_name = "/last_data.json"
+        self.save_file_name = "/data.json"
 
         self.layout = QGridLayout(self)
         self.label = QLabel(self)
@@ -38,7 +37,11 @@ class JsonConverterWindow(QWidget):
 
     def get_save_path(self):
 
-        self.save_path = QFileDialog.getExistingDirectory(self, 'Select where you want to save your data.', os.getenv("HOME"))
+        self.save_path = QFileDialog.getExistingDirectory(
+            self, 
+            'Select where you want to save your data.', 
+            os.getenv("HOME")
+            )
 
         if not self.save_path:
 
@@ -63,7 +66,6 @@ class JsonConverterWindow(QWidget):
         if file_path:
             self.data = pickle.load(open(file_path, "rb"))
             self.label.setText(
-                "Done converting..."
                 "\n Used file is '{file_path:}'"
                 "\n Json file is saved to '{save_path:}'".format(file_path=file_path,
                                                                  save_path=self.save_path)
@@ -76,15 +78,23 @@ class JsonConverterWindow(QWidget):
         
         # to_json implicitly call convert_array_to_list
         JsonConverter.to_json(self.data, output=self.save_path)
+        prog = QProgressBar(self)
+        prog.setValue(100)
+        self.layout.addWidget(prog)
+        self.label.setText("Conversion is done!" + self.label.text())
+
         
     def add_market_choice(self):
         
         market_choice = []
-        
-        # create t list containing n agent choice
+
+        #create t list containing n agent market choice
+        # of the form [ [ [firstvalue, secondvalue] * n ] * t ] 
         for array in self.data["hist_choice"]:
             market_choice.append(self.get_real_good(array))
-        
+
+        #append secondvalue (indx is t - 1 in order 
+        #to get the initialy carried good)
         for t in range(len(self.data["hist_h"])):
             for idx in range(len(market_choice[0])):
                 if idx != 0:
@@ -141,8 +151,6 @@ class JsonConverter(object):
 
         with open(output, "w") as file:
             json.dump(json_data, file)
-
-        print("Done converting...")
 
     @classmethod
     def convert_array_into_list(cls, value):

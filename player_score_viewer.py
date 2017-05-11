@@ -50,7 +50,7 @@ class ScoreWindow(QWidget):
         self.sorted_data = [{"id": None, "p": None, "reward": None} for i in range(n)]
         
         game_ids = np.sort(self.data["server_id_in_use"])
-
+            
         for idx in range(n):
             self.sorted_data[idx]["id"] = game_ids[idx]
             self.sorted_data[idx]["p"] = self.data["p"][idx]
@@ -66,19 +66,19 @@ class ScoreWindow(QWidget):
                          + "type: {}  ".format(data["p"])
                          + "reward: {}  ".format(data["reward"]))
 
+            #generate new coordinates
             my_coord = next(coord)
 
             self.layout.addWidget(info, my_coord[0], my_coord[1])
 
     def init_UI(self):
-
+        
         self.fill_layout()
 
         self.setStyleSheet("border: 1px solid #5D5D5C;")
         self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle("AndroidExperiment: player's stats")
         self.show()
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
