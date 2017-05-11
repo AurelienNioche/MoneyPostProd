@@ -14,21 +14,28 @@ class MainWindow(QWidget):
         
         self.layout = QHBoxLayout(self)
 
-        self.graph = QPushButton("Compute figures")
-        self.score = QPushButton("Print scores")
-        self.json = QPushButton("JSON Converter")
+        graph = QPushButton("Compute figures")
+        score = QPushButton("Print scores")
+        json = QPushButton("JSON Converter")
+        video = QPushButton("Assemble video")
        
-        self.buttons = [self.graph, self.score, self.json]
 
-        self.graph.clicked.connect(self.compute_figures)
-        self.score.clicked.connect(self.view_players_scores)
-        self.json.clicked.connect(self.convert_to_json)
+        graph.clicked.connect(self.compute_figures)
+        score.clicked.connect(self.view_players_scores)
+        json.clicked.connect(self.convert_to_json)
+        video.clicked.connect(self.convert_video)
+
+        self.buttons = [graph, score, json, video]
 
         self.init_UI()
     
+    def convert_video(self):
+
+        Popen(["python", "video_converter_gui.py"])
+
     def compute_figures(self):
 
-        Popen(["python",  "main_graph.py"])
+        Popen(["python",  "graph_gui.py"])
 
     def view_players_scores(self):
 
@@ -49,13 +56,12 @@ class MainWindow(QWidget):
         self.setWindowTitle("AndroidExperiment: Main post prod")
         self.show()
 
-    @staticmethod
-    def main():
+def main():
 
-        app = QApplication(sys.argv)
-        win = MainWindow()
-        sys.exit(app.exec_()) 
+    app = QApplication(sys.argv)
+    win = MainWindow()
+    sys.exit(app.exec_()) 
 
 if __name__ == '__main__':
 
-    MainWindow.main() 
+   main() 
