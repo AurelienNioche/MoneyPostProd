@@ -378,7 +378,7 @@ class GraphWindow(QWidget):
 
         else:
             try:
-                with open(file_path, "rb") as f:
+                with open(file_path, "r") as f:
                     self.data = json.load(f)
             
             except Exception as e:
