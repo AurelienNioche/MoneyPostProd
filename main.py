@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
-import numpy as np
-from PyQt5.QtWidgets import QDialog, QWidget, QApplication, QFileDialog, QHBoxLayout, QMessageBox, QLabel, QPushButton
+from PyQt5.QtWidgets import QWidget, QApplication, QHBoxLayout, QPushButton
 from subprocess import Popen
-import pickle
-import os
 
 
 class MainWindow(QWidget):
