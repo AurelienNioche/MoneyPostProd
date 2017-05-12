@@ -70,12 +70,12 @@ class ScoreWindow(QWidget):
         n = len(self.data["p"])
         self.sorted_data = [{"id": None, "p": None, "reward": None} for i in range(n)]
         
-        game_ids = np.sort(self.data["server_id_in_use"])
+        arg = np.argsort(self.data["server_id_in_use"])
             
         for idx in range(n):
-            self.sorted_data[idx]["id"] = game_ids[idx]
-            self.sorted_data[idx]["p"] = self.data["p"][idx]
-            self.sorted_data[idx]["reward"] = self.data["reward_amount"][idx]
+            self.sorted_data[idx]["id"] = self.data["server_id_in_use"][arg[idx]]
+            self.sorted_data[idx]["p"] = self.data["p"][arg[idx]]
+            self.sorted_data[idx]["reward"] = self.data["reward_amount"][arg[idx]]
 
     def fill_layout(self):
 
