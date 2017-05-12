@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import \
 from PyQt5.QtCore import pyqtSignal, QObject, QTimer, Qt
 from os import path, getenv, chdir
 import numpy as np
+from PyQt5.QtCore import pyqtSignal, QObject
+from os import path, getenv, chdir, rename
 import sys
 from threading import Thread
 from multiprocessing import cpu_count
@@ -23,10 +25,13 @@ class ConverterTread(Thread):
     def run(self):
 
         chdir(self.folder)
+        old_file = self.folder + "/final.avi"
+        if path.exists(self.folder + "/final.avi"):
+            rename(old_file, self.folder + "/_old_final.avi")
 
         call("avconv -threads {} -f image2 -i %04dshot.png "
-             "-r 60 -s 1366x768 -qscale 1 final{}.avi"
-             .format(cpu_count(), np.random.randint(99999)).split(" "))
+             "-r 60 -s 1366x768 -qscale 1 final.avi"
+             .format(cpu_count()).split(" "))
 
         self.communicant.signal.emit()
 
@@ -43,7 +48,8 @@ class VideoConverterWindow(QWidget):
         self.label.setAlignment(Qt.AlignHCenter)
 
         self.folder_path = None
-
+        
+        # 3 mn = 180 000 ms
         self.refresh = (180000 / 100)
         self.timer = QTimer(self)
 

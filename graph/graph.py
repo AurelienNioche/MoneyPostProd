@@ -1,5 +1,4 @@
 from pylab import plt, np
-from scipy.stats import norm
 from os import path
 import json
 from collections import Counter
@@ -289,23 +288,26 @@ class MediumOfExchangePlot(object):
         plt.close()
 
 
-class GaussianReward(object):
+class RewardsDistribution(object):
 
     legend_font_size = 12
     label_font_size = 12
+    bar_width = 4
 
     def __init__(self, save_path, reward_amount):
-        self.data, self.fit  = self.format_data(reward_amount)
-        self.fig_name = save_path + "/gaussian_reward.pdf"
+
+        self.X, self.Y = self.format_data(reward_amount)
+        self.fig_name = save_path + "/rewards_distribution.pdf"
 
     @staticmethod
     def format_data(reward_amount):
 
-        data = np.sort(reward_amount)
+        x = np.arange(min(reward_amount), max(reward_amount), 2)
+        y = []
+        for i in x:
+            y.append(reward_amount.count(i) + reward_amount.count(i+1))
 
-        fit = norm.pdf(data, np.mean(data), np.std(data))
-
-        return data, fit
+        return x, y
 
     def plot(self):
 
@@ -314,10 +316,11 @@ class GaussianReward(object):
         fig.patch.set_alpha(0)
 
         ax = plt.gca()
-        ax.set_title("Gaussian rewards \n")
+        ax.set_title("Rewards distribution\n")
 
-        ax.plot(self.data, self.fit)
-        ax.hist(self.data, normed=True)
+        width = 2
+
+        ax.bar(self.X, self.Y, width, tick_label=self.X, color="grey")
 
         plt.savefig(self.fig_name)
         plt.close()
@@ -347,8 +350,8 @@ def plot(data, save_path):
     ch_plot = ChoicePlot(save_path, choice=data["market_choice"])
     ch_plot.plot()
 
-    gauss_plot = GaussianReward(save_path, reward_amount=data["reward_amount"])
-    gauss_plot.plot()
+    rd_plot = RewardsDistribution(save_path, reward_amount=data["reward_amount"])
+    rd_plot.plot()
 
 
 def main():

@@ -18,7 +18,6 @@ class MainWindow(QWidget):
         score = QPushButton("Print scores")
         json = QPushButton("JSON Converter")
         video = QPushButton("Assemble video")
-       
 
         graph.clicked.connect(self.compute_figures)
         score.clicked.connect(self.view_players_scores)
@@ -55,6 +54,7 @@ class MainWindow(QWidget):
         self.fill_layout()
         self.setWindowTitle("AndroidExperiment: Main post prod")
         self.show()
+
 
 def main():
 
