@@ -4,10 +4,13 @@ import json
 from collections import Counter
 
 
-class MarketAttendancePlot(object):
+class Parameters(object):
 
     legend_font_size = 12
     label_font_size = 12
+
+
+class MarketAttendancePlot(Parameters):
 
     def __init__(self, save_path, choice):
 
@@ -70,10 +73,7 @@ class MarketAttendancePlot(object):
         plt.close()
 
 
-class ChoicePlot(object):
-
-    legend_font_size = 12
-    label_font_size = 12
+class ChoicePlot(Parameters):
 
     def __init__(self, save_path, choice):
 
@@ -162,10 +162,7 @@ class ChoicePlot(object):
         plt.close()
 
 
-class ConsumptionPlot(object):
-
-    legend_font_size = 12
-    label_font_size = 12
+class ConsumptionPlot(Parameters):
 
     def __init__(self, save_path, choice, success, agent_type):
 
@@ -214,10 +211,7 @@ class ConsumptionPlot(object):
         plt.close()
 
 
-class MediumOfExchangePlot(object):
-
-    legend_font_size = 12
-    label_font_size = 12
+class MediumOfExchangePlot(Parameters):
 
     def __init__(self, save_path, choice, agent_type):
 
@@ -288,11 +282,9 @@ class MediumOfExchangePlot(object):
         plt.close()
 
 
-class RewardsDistribution(object):
+class RewardsDistribution(Parameters):
 
-    legend_font_size = 12
-    label_font_size = 12
-    bar_width = 4
+    bar_width = 2
 
     def __init__(self, save_path, reward_amount):
 
@@ -318,9 +310,7 @@ class RewardsDistribution(object):
         ax = plt.gca()
         ax.set_title("Rewards distribution\n")
 
-        width = 2
-
-        ax.bar(self.X, self.Y, width, tick_label=self.X, color="grey")
+        ax.bar(self.X, self.Y, self.bar_width, tick_label=self.X, color="grey")
 
         plt.savefig(self.fig_name)
         plt.close()
