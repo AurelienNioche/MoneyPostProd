@@ -27,20 +27,24 @@ class MainWindow(QWidget):
         self.buttons = [json, graph, video, score]
 
         self.init_UI()
-    
-    def convert_video(self):
+
+    @staticmethod
+    def convert_video():
 
         Popen(["python", "video_converter_gui.py"])
 
-    def compute_figures(self):
+    @staticmethod
+    def compute_figures():
 
         Popen(["python",  "graph_gui.py"])
 
-    def view_players_scores(self):
+    @staticmethod
+    def view_players_scores():
 
         Popen(["python",  "player_score_viewer.py"])
 
-    def convert_to_json(self):
+    @staticmethod
+    def convert_to_json():
 
         Popen(["python",  "json_converter_gui.py"])
 
