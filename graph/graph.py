@@ -6,12 +6,12 @@ from collections import Counter
 
 class Parameters(object):
 
-    figsize = (30, 17)
-    legend_font_size = 20
-    label_font_size = 30
+    figsize = (25, 12)
+    legend_font_size = 30
+    label_font_size = 40
     label_value_size = 27
     title_size = 50
-    line_width = 4
+    line_width = 5
 
 
 class MarketAttendancePlot(Parameters):
@@ -61,9 +61,10 @@ class MarketAttendancePlot(Parameters):
         ]
 
         for i, y in enumerate(self.Ys):
-            ax.plot(self.X, y, label=labels[i], linewidth=2, color="black", linestyle=line_styles[i])
+            ax.plot(self.X, y, label=labels[i],
+                    linewidth=self.line_width, color="black", linestyle=line_styles[i])
 
-        ax.legend(bbox_to_anchor=(0.15, 0.1), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(1.1, 1.1), fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
@@ -155,7 +156,7 @@ class ChoicePlot(Parameters):
                 linewidth=self.line_width, color=colors[i], linestyle=line_styles[i],
                 marker=markers[i])
 
-        ax.legend(bbox_to_anchor=(0.9, 0.9), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(1.1, 1.1), fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
@@ -278,7 +279,7 @@ class MediumOfExchangePlot(Parameters):
         for i, y in enumerate(self.Ys):
             ax.plot(self.X, y, label=labels[i], linewidth=self.line_width, color="black", linestyle=line_styles[i])
 
-        ax.legend(bbox_to_anchor=(0.15, 0.1), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(1.1, 1.1), fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
