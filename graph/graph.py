@@ -5,9 +5,11 @@ from collections import Counter
 
 
 class Parameters(object):
-
-    legend_font_size = 12
-    label_font_size = 12
+    figsize = (30, 17)
+    legend_font_size = 20
+    label_font_size = 30
+    label_value_size = 27
+    title_size = 50
 
 
 class MarketAttendancePlot(Parameters):
@@ -38,12 +40,12 @@ class MarketAttendancePlot(Parameters):
 
     def plot(self):
 
-        fig = plt.figure(figsize=(25, 12))
+        fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
         fig.patch.set_alpha(0)
 
         ax = plt.gca()
-        ax.set_title("Markets attendance \n")
+        ax.set_title("Markets attendance \n", fontsize=self.title_size)
 
         labels = [
             "Market 0 -> 1 / 1 -> 0",
@@ -60,6 +62,7 @@ class MarketAttendancePlot(Parameters):
             ax.plot(self.X, y, label=labels[i], linewidth=2, color="black", linestyle=line_styles[i])
 
         ax.legend(bbox_to_anchor=(0.15, 0.1), fontsize=self.legend_font_size, frameon=False)
+        ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
         ax.set_ylabel("n", fontsize=self.label_font_size)
@@ -103,12 +106,12 @@ class ChoicePlot(Parameters):
 
     def plot(self):
 
-        fig = plt.figure(figsize=(25, 12))
+        fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
         fig.patch.set_alpha(0)
 
         ax = plt.gca()
-        ax.set_title("Choices \n")
+        ax.set_title("Choices \n", fontsize=self.title_size)
 
         labels = [
             "Choice 0 -> 1",
@@ -149,6 +152,7 @@ class ChoicePlot(Parameters):
                     marker=markers[i])
 
         ax.legend(bbox_to_anchor=(0.9, 0.9), fontsize=self.legend_font_size, frameon=False)
+        ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
         ax.set_ylabel("n", fontsize=self.label_font_size)
@@ -190,14 +194,15 @@ class ConsumptionPlot(Parameters):
 
     def plot(self):
 
-        fig = plt.figure(figsize=(25, 12))
+        fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
         fig.patch.set_alpha(0)
 
         ax = plt.gca()
-        ax.set_title("Consumption\n")
+        ax.set_title("Consumption\n", fontsize=self.title_size)
 
         ax.plot(self.X, self.Y, linewidth=2, color="black")
+        ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
         ax.set_ylabel("n", fontsize=self.label_font_size)
@@ -247,12 +252,13 @@ class MediumOfExchangePlot(Parameters):
 
     def plot(self):
 
-        fig = plt.figure(figsize=(25, 12))
+        fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
         fig.patch.set_alpha(0)
 
         ax = plt.gca()
-        ax.set_title("Medium of exchange \n")
+        ax.set_title("Medium of exchange \n", fontsize=self.title_size)
+        
 
         labels = [
             "Good 0",
@@ -269,6 +275,7 @@ class MediumOfExchangePlot(Parameters):
             ax.plot(self.X, y, label=labels[i], linewidth=2, color="black", linestyle=line_styles[i])
 
         ax.legend(bbox_to_anchor=(0.15, 0.1), fontsize=self.legend_font_size, frameon=False)
+        ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
         ax.set_ylabel("n", fontsize=self.label_font_size)
@@ -303,14 +310,15 @@ class RewardsDistribution(Parameters):
 
     def plot(self):
 
-        fig = plt.figure(figsize=(25, 12))
+        fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
         fig.patch.set_alpha(0)
 
         ax = plt.gca()
-        ax.set_title("Rewards distribution\n")
+        ax.set_title("Rewards distribution\n", fontsize=self.title_size)
 
         ax.bar(self.X, self.Y, self.bar_width, tick_label=self.X, color="grey")
+        ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         plt.savefig(self.fig_name)
         plt.close()
