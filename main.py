@@ -24,7 +24,7 @@ class MainWindow(QWidget):
         json.clicked.connect(self.convert_to_json)
         video.clicked.connect(self.convert_video)
 
-        self.buttons = [graph, score, json, video]
+        self.buttons = [json, graph, video, score]
 
         self.init_UI()
     
