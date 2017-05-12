@@ -154,11 +154,11 @@ class Backup(object):
 
 def main():
 
-    file_path = path.expanduser("~/Desktop/AndroidXP/fake_uniform.json")
+    file_path = path.expanduser("~/Desktop/AndroidXP/fake_non_uniform.json")
 
     t_max = 100
 
-    repartition_of_roles = 33, 33, 33
+    repartition_of_roles = 50, 25, 25  # 33, 33, 33
 
     cognitive_parameters = {
         "alpha": 0.1,

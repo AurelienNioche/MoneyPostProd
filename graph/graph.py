@@ -1,7 +1,6 @@
 from pylab import plt, np
 from os import path
 import json
-from collections import Counter
 
 
 class Parameters(object):
@@ -64,7 +63,7 @@ class MarketAttendancePlot(Parameters):
             ax.plot(self.X, y, label=labels[i],
                     linewidth=self.line_width, color="black", linestyle=line_styles[i])
 
-        ax.legend(bbox_to_anchor=(1.1, 1.1), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(0.75, 1.19), loc=2, fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
@@ -156,7 +155,7 @@ class ChoicePlot(Parameters):
                 linewidth=self.line_width, color=colors[i], linestyle=line_styles[i],
                 marker=markers[i])
 
-        ax.legend(bbox_to_anchor=(1.1, 1.1), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(0.9, 0.9), fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
