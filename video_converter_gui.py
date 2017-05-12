@@ -30,7 +30,7 @@ class ConverterTread(Thread):
             rename(old_file, self.folder + "/_old_final.avi")
 
         call("avconv -threads {} -f image2 -i %04dshot.png "
-             "-r 60 -s 1366x768 -qscale 1 final.avi"
+             "-r 60 -s 1024x768 -qscale 1 final.avi"
              .format(cpu_count()).split(" "))
 
         self.communicant.signal.emit()
