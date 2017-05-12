@@ -154,7 +154,7 @@ class Backup(object):
 
 def main():
 
-    file_path = path.expanduser("~/Desktop/AndroidXP/fake.json")
+    file_path = path.expanduser("~/Desktop/AndroidXP/fake_uniform.json")
 
     t_max = 100
 
