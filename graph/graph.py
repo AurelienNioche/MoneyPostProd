@@ -43,7 +43,7 @@ class MarketAttendancePlot(Parameters):
 
         fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
-        fig.patch.set_alpha(0)
+        # fig.patch.set_alpha(0)
 
         ax = plt.gca()
         ax.set_title("Markets attendance \n", fontsize=self.title_size)
@@ -63,7 +63,7 @@ class MarketAttendancePlot(Parameters):
             ax.plot(self.X, y, label=labels[i],
                     linewidth=self.line_width, color="black", linestyle=line_styles[i])
 
-        ax.legend(bbox_to_anchor=(0.75, 1.19), loc=2, fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(0.8, 1.19), loc=2, fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
@@ -155,7 +155,7 @@ class ChoicePlot(Parameters):
                 linewidth=self.line_width, color=colors[i], linestyle=line_styles[i],
                 marker=markers[i])
 
-        ax.legend(bbox_to_anchor=(0.9, 0.9), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(0.95, 1.19), loc=2, fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
@@ -258,11 +258,10 @@ class MediumOfExchangePlot(Parameters):
 
         fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
-        fig.patch.set_alpha(0)
+        # fig.patch.set_alpha(0)
 
         ax = plt.gca()
         ax.set_title("Medium of exchange \n", fontsize=self.title_size)
-        
 
         labels = [
             "Good 0",
@@ -278,7 +277,7 @@ class MediumOfExchangePlot(Parameters):
         for i, y in enumerate(self.Ys):
             ax.plot(self.X, y, label=labels[i], linewidth=self.line_width, color="black", linestyle=line_styles[i])
 
-        ax.legend(bbox_to_anchor=(1.1, 1.1), fontsize=self.legend_font_size, frameon=False)
+        ax.legend(bbox_to_anchor=(0.95, 1.19), loc=2, fontsize=self.legend_font_size, frameon=False)
         ax.tick_params(axis='both', which='major', labelsize=self.label_value_size)
 
         ax.set_xlabel("t", fontsize=self.label_font_size)
@@ -316,7 +315,7 @@ class RewardsDistribution(Parameters):
 
         fig = plt.figure(figsize=self.figsize)
         fig.patch.set_facecolor('white')
-        fig.patch.set_alpha(0)
+        # fig.patch.set_alpha(0)
 
         ax = plt.gca()
         ax.set_title("Rewards distribution\n", fontsize=self.title_size)
