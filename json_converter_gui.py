@@ -6,6 +6,7 @@ import json
 import pickle
 import numpy as np
 from os import path
+from shutil import copyfile
 
 
 class JsonConverterWindow(QWidget):
@@ -43,8 +44,10 @@ class JsonConverterWindow(QWidget):
 
         self.label.setText(
             "\n Used file is '{file_path:}'"
-            "\n Json file is saved to '{save_path:}'".format(file_path=self.file_path,
-                                                             save_path=self.save_path)
+            "\n Json file is saved to '{save_path:}'"
+            "\n A copy of json file is saved in the same folder as 'data.json'."
+                .format(file_path=self.file_path,
+                        save_path=self.save_path)
         )
 
         self.setWindowTitle("JSON converter")
@@ -169,6 +172,10 @@ class JsonConverter(object):
 
         with open(output, "w") as file:
             json.dump(json_data, file)
+
+        # Make a copy
+        cp_name = "/" + path.join(*output.split("/")[:-1]) + "/data.json"
+        copyfile(output, cp_name)
 
     @classmethod
     def convert_array_into_list(cls, value):

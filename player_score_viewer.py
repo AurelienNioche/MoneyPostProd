@@ -70,7 +70,7 @@ class ScoreWindow(QWidget):
         n = len(self.data["p"])
         self.sorted_data = [{"id": None, "p": None, "reward": None} for i in range(n)]
         
-        arg = np.argsort(self.data["server_id_in_use"])
+        arg = np.argsort(self.data["reward_amount"])[::-1]
             
         for idx in range(n):
             self.sorted_data[idx]["id"] = self.data["server_id_in_use"][arg[idx]]
